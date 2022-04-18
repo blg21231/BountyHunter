@@ -19,7 +19,7 @@ contract BountyCreator is Ownable {
     struct Response {
     string responder;
     string response;
-    Vote votes;
+    Vote[] votes;
   }
   
     struct Bounty {
