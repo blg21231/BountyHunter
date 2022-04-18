@@ -1,0 +1,9 @@
+pragma solidity >=0.5.0 <0.6.0;
+
+import "./BountyCreator.sol";
+
+contract respond is BountyCreator
+
+contract ZombieAttack is ZombieHelper {
+  uint randNonce = 0;
+  uint attackVictoryProbability = 70;
