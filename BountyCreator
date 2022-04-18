@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract BountyHunter is Ownable {
+contract BountyCreator is Ownable {
 
   using SafeMath for uint256;
   using SafeMath32 for uint32;
@@ -37,6 +37,7 @@ contract BountyHunter is Ownable {
   Bounty[] public bounties;
 
   function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal {
+    bounties.push(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses);
     emit newBounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
   }
 }
