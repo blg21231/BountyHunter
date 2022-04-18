@@ -1,0 +1,45 @@
+pragma solidity >=0.5.0 <0.6.0;
+
+import "./ownable.sol";
+import "./safemath.sol";
+
+contract BountyHunter is Ownable {
+
+  using SafeMath for uint256;
+  using SafeMath32 for uint32;
+  using SafeMath16 for uint16;
+
+  event newBounty(uint expiration, string name, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
+  
+    struct Vote {
+    string voter;
+    uint numVotes;
+  }
+  
+    struct Response {
+    string responder;
+    string response;
+    Vote votes;
+  }
+  
+    struct Bounty {
+    string sponsor;
+    string name;
+    string description;
+    uint expiration;
+    string bounty_asset;
+    uint bounty_quantity;
+    string subject;
+    uint difficulty;
+    Response[] responses;
+  }
+  
+  Bounty[] public bounties;
+  
+  function _createZombie(string _name, uint _dna) internal {
+      uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1;
+      zombieToOwner[id] = msg.sender;
+      ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].add(1);
+      emit NewZombie(id, _name, _dna);
+    }    
+    
