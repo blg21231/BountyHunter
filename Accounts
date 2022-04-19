@@ -23,8 +23,8 @@ contract Accounts is Ownable {
   
   Account[] public Accounts;
 
-  function _createAccount() internal {
-    Accounts.push(Account(False, Wallet("EDU", 5)));
+  function _createAccount(boolean _verified) internal {
+    Accounts.push(Account(_verified, Wallet("EDU", 5)));
     emit accountCreated(Accounts.length - 1, Accounts[Accounts.length - 1].student, Accounts[Accounts.length - 1].Wallet);
   }
 }
