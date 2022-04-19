@@ -5,13 +5,19 @@ import "./BountyCreator.sol";
 contract BountyManager is BountyCreator {
 
   event winningResponse(uint _bountyNum, uint _responseNum);
+  event responseCreated(uint _bountyNum, uint _responseNum);
 
   modifier onlyOwnerOf(uint _bountyNum) {
       require(msg.sender == Bounties[_bountyNum].sponsor);
       _;
   }
-  
-  function respond(uint _bountyNum, 
+    
+  function respond(uint _bountyNum, string _response) external {
+    Vote[] initVotes = [];
+    Response response = Response(msg.sender, _response, initVotes);
+    Bounties[_bountyNum].responses.push(response);
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
   
   function closeBounty(uint _bountyNum) private {
     uint totalVotes = 0;
@@ -29,6 +35,8 @@ contract BountyManager is BountyCreator {
       }
       totalVotes = totalVotes + currentVotes;
     }
+    
+    emit winningResponse(_bountyNum, winningResponse);
     
     //send bounty_amount bounty_asset to Bounties[_bountyNum].responses[r].responder
     
