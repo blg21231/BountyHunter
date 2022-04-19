@@ -12,7 +12,23 @@ contract Bounties is Ownable {
   event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
   event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
   
+  modifier validAccount(uint _accountNum) {
+    require((_accountNum > 0) && (_accountNum < Accounts.length));
+    _;
+  }
+
+  modifier validBounty(uint _bountyNum) {
+    require((_bountyNum > 0) && (_bountyNum < Bounties.length));
+    _;
+  }
+  
+  modifier validResponse(uint _bountyNum, uint _responseNum) {
+    require((_bountyNum > 0) && (_bountyNum < Bounties.length) && (_responseNum > 0) && (_responseNum < Bounties[_bountyNum].responses.length));
+    _;
+  }
+
   modifier sufficientBalance(uint _accountNum, string _asset, uint _quantity) {
+    require(validAccount(_accountNum));
     boolean sufficient = False;
     for (uint a = 0; a < Accounts[_accountNum].Wallet.length; a++) {
       if (keccak256(abi.encodePacked(Accounts[_accountNum].Wallet[a].Asset)) == keccak256(abi.encodePacked(_asset))) {
