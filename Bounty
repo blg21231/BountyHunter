@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract Bounties is Ownable {
+contract Bounty is Ownable {
 
   using SafeMath for uint256;
   using SafeMath32 for uint32;
@@ -11,6 +11,31 @@ contract Bounties is Ownable {
 
   event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
   event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
+   
+    struct Vote {
+    string voter;
+    uint numVotes;
+  }
+  
+    struct Response {
+    string responder;
+    string response;
+    Vote[] votes;
+  }
+  
+    struct Bounty {
+    string sponsor;
+    string name;
+    string description;
+    uint expiration;
+    string bounty_asset;
+    uint bounty_quantity;
+    string subject;
+    uint difficulty;
+    Response[] responses;
+  }
+  
+  Bounty[] public Bounties;
   
   modifier validAccount(uint _accountNum) {
     require((_accountNum > 0) && (_accountNum < Accounts.length));
@@ -40,31 +65,6 @@ contract Bounties is Ownable {
     require(sufficient);
     _;
   }
-  
-    struct Vote {
-    string voter;
-    uint numVotes;
-  }
-  
-    struct Response {
-    string responder;
-    string response;
-    Vote[] votes;
-  }
-  
-    struct Bounty {
-    string sponsor;
-    string name;
-    string description;
-    uint expiration;
-    string bounty_asset;
-    uint bounty_quantity;
-    string subject;
-    uint difficulty;
-    Response[] responses;
-  }
-  
-  Bounty[] public bounties;
 
   function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal {
     bounties.push(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses);
