@@ -9,7 +9,21 @@ contract Bounties is Ownable {
   using SafeMath32 for uint32;
   using SafeMath16 for uint16;
 
-  event newBounty(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
+  event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
+  event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
+  
+  modifier sufficientBalance(uint _accountNum, string _asset, uint _quantity) {
+    boolean sufficient = False;
+    for (uint a = 0; a < Accounts[_accountNum].Wallet.length; a++) {
+      if (keccak256(abi.encodePacked(Accounts[_accountNum].Wallet[a].Asset)) == keccak256(abi.encodePacked(_asset))) {
+        sufficient = True;
+        break;
+      }
+    }
+    emit sufficientBalance(_accountNum, _asset, _quantity, sufficient);
+    require(sufficient);
+    _;
+  }
   
     struct Vote {
     string voter;
@@ -38,7 +52,7 @@ contract Bounties is Ownable {
 
   function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal {
     bounties.push(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses);
-    emit newBounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
+    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
   }
 }
     
