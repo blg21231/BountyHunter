@@ -3,71 +3,28 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract Bounties is Ownable {
+contract Accounts is Ownable {
 
   using SafeMath for uint256;
   using SafeMath32 for uint32;
   using SafeMath16 for uint16;
-
-  event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
-  event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
   
-  modifier validAccount(uint _accountNum) {
-    require((_accountNum > 0) && (_accountNum < Accounts.length));
-    _;
-  }
-
-  modifier validBounty(uint _bountyNum) {
-    require((_bountyNum > 0) && (_bountyNum < Bounties.length));
-    _;
+  struct Wallet {
+    string Asset;
+    uint Quantity;
   }
   
-  modifier validResponse(uint _bountyNum, uint _responseNum) {
-    require((_bountyNum > 0) && (_bountyNum < Bounties.length) && (_responseNum > 0) && (_responseNum < Bounties[_bountyNum].responses.length));
-    _;
+  struct Account {
+    boolean student;
+    Wallet wallet;
   }
 
-  modifier sufficientBalance(uint _accountNum, string _asset, uint _quantity) {
-    require(validAccount(_accountNum));
-    boolean sufficient = False;
-    for (uint a = 0; a < Accounts[_accountNum].Wallet.length; a++) {
-      if (keccak256(abi.encodePacked(Accounts[_accountNum].Wallet[a].Asset)) == keccak256(abi.encodePacked(_asset))) {
-        sufficient = True;
-        break;
-      }
-    }
-    emit sufficientBalance(_accountNum, _asset, _quantity, sufficient);
-    require(sufficient);
-    _;
-  }
+  event accountCreated(uint accountNum, boolean student, Wallet wallet);
   
-    struct Vote {
-    string voter;
-    uint numVotes;
-  }
-  
-    struct Response {
-    string responder;
-    string response;
-    Vote[] votes;
-  }
-  
-    struct Bounty {
-    string sponsor;
-    string name;
-    string description;
-    uint expiration;
-    string bounty_asset;
-    uint bounty_quantity;
-    string subject;
-    uint difficulty;
-    Response[] responses;
-  }
-  
-  Bounty[] public bounties;
+  Account[] public Accounts;
 
-  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal {
-    bounties.push(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses);
-    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
+  function _createAccount() internal {
+    Accounts.push(Account(False, Wallet("EDU", 5)));
+    emit accountCreated(Accounts.length - 1, Accounts[Accounts.length - 1].student, Accounts[Accounts.length - 1].Wallet);
   }
 }
