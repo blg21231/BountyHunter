@@ -11,6 +11,8 @@ contract BountyManager is BountyCreator {
       _;
   }
   
+  function respond(uint _bountyNum, 
+  
   function closeBounty(uint _bountyNum) private {
     uint totalVotes = 0;
     uint winningVotes = 0;
