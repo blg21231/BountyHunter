@@ -36,11 +36,6 @@ contract Bounty is Ownable {
   }
   
   Bounty[] public Bounties;
-  
-  modifier validAccount(uint _accountNum) {
-    require((_accountNum > 0) && (_accountNum < Accounts.length));
-    _;
-  }
 
   modifier validBounty(uint _bountyNum) {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
@@ -49,20 +44,6 @@ contract Bounty is Ownable {
   
   modifier validResponse(uint _bountyNum, uint _responseNum) {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length) && (_responseNum > 0) && (_responseNum < Bounties[_bountyNum].responses.length));
-    _;
-  }
-
-  modifier sufficientBalance(uint _accountNum, string _asset, uint _quantity) {
-    require(validAccount(_accountNum));
-    boolean sufficient = False;
-    for (uint a = 0; a < Accounts[_accountNum].Wallet.length; a++) {
-      if (keccak256(abi.encodePacked(Accounts[_accountNum].Wallet[a].Asset)) == keccak256(abi.encodePacked(_asset))) {
-        sufficient = True;
-        break;
-      }
-    }
-    emit sufficientBalance(_accountNum, _asset, _quantity, sufficient);
-    require(sufficient);
     _;
   }
 
