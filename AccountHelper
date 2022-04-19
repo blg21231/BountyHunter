@@ -4,11 +4,23 @@ import "./BountyCreator.sol";
 
 contract AccountHelper is Account {
 
-  event winningResponse(uint _bountyNum, uint _responseNum);
-  event responseCreated(uint _bountyNum, uint _responseNum);
+  event verifiedAccount(uint accountNum, boolean value);
+  event linkedAccount(uint accountNum, boolean value);
+  
+  mapping (uint => address) public accountOwner; 
 
-  modifier onlyOwnerOf(uint _bountyNum) {
-      require(msg.sender == Bounties[_bountyNum].sponsor);
+  modifier verifiedAccount(uint _accountNum) {
+      require(Accounts[_accountNum].student);
+      _;
+  }
+  
+  modifier linkedAccount(uint _accountNum) {
+      require(accountOwner(_accountNum) != 0);
+      _;
+  }
+  
+  modifier isOwner(uint _accountNum) {
+      require(keccak256(abi.encodePacked(msg.sender)) == keccak256(abi.encodePacked(accountOwner(_accountNum))));
       _;
   }
     
