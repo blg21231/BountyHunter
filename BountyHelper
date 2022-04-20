@@ -11,6 +11,17 @@ contract BountyHelper is Bounty {
       require(msg.sender == Bounties[_bountyNum].sponsor);
       _;
   }
+  
+  function getBounties(string _sortBy, boolean asc) external {
+    if (_sortBy == 'expiration') {
+    }
+    elif (_sortBy == 'votes') {
+    }
+    elif (_sortBy == 'bounty_asset') {
+    }
+    elif (_sortBy == 'bounty_quantity') {
+    }
+  }
     
   function respond(uint _bountyNum, string _response) external {
     Vote[] initVotes = [];
