@@ -2,7 +2,7 @@ pragma solidity >=0.5.0 <0.6.0;
 
 import "./BountyCreator.sol";
 
-contract AccountHelper is Account {
+contract Account is AccountCreator {
 
   event verifiedAccount(uint accountNum, boolean value);
   event linkedAccount(uint accountNum, boolean value);
