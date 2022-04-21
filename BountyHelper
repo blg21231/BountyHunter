@@ -2,7 +2,7 @@ pragma solidity >=0.5.0 <0.6.0;
 
 import "./BountyCreator.sol";
 
-contract BountyHelper is Bounty {
+contract BountyHelper is Bounty EDU {
 
   event winningResponse(uint _bountyNum, uint _responseNum);
   event responseCreated(uint _bountyNum, uint _responseNum);
@@ -23,7 +23,8 @@ contract BountyHelper is Bounty {
     }
   }
     
-  function respond(uint _bountyNum, string _response) external {
+  function respond(uint _bountyNum, string _response) external payable {
+    require(msg.value == 0.001 ether);
     Vote[] initVotes = [];
     Response response = Response(msg.sender, _response, initVotes);
     Bounties[_bountyNum].responses.push(response);
@@ -49,10 +50,10 @@ contract BountyHelper is Bounty {
     
     emit winningResponse(_bountyNum, winningResponse);
     
-    //send bounty_amount bounty_asset to Bounties[_bountyNum].responses[r].responder
+    _mint(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
     
     for (uint v = 0; v < Bounties[_bountyNum].responses[winningResponse].votes.length; v++) {
-      // send (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes;
+      _mint(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
     }
   }
 
