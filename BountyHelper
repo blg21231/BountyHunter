@@ -1,6 +1,7 @@
 pragma solidity >=0.5.0 <0.6.0;
 
 import "./BountyCreator.sol";
+import "./SafeMath.sol";
 import "./EDU.sol";
 
 contract BountyHelper is Bounty {
@@ -30,6 +31,22 @@ contract BountyHelper is Bounty {
     Response response = Response(msg.sender, _response, initVotes);
     Bounties[_bountyNum].responses.push(response);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function vote(uint _bountyNum, uint _responseNum) external payable {
+    require(msg.value >= 0.001 ether);
+    uint startingVotes = 0;
+    for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
+      if (Bounties[_bountyNum].responses[_responseNum].votes[v].voter == msg.sender) {
+        startingVotes = startingVotes + Bounties[_bountyNum].responses[_responseNum].votes[v].votes;
+      }
+    }
+    uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
+    uint refund = msg.value - votesPurchased * 0.001;
+    Vote vote = Vote(msg.sender, votesPurchased);
+    Bounties[_bountyNum].responses.push(response);
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+    msg.sender.transfer(refund);
   }
   
   function closeBounty(uint _bountyNum) private {
