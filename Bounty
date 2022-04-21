@@ -63,7 +63,7 @@ contract Bounty is Ownable {
     _;
   }
   
-  function payOut(address payable _payee, uint _quantity) external onlyOwner {
+  function _payOut(address payable _payee, uint _quantity) external onlyOwner {
     _transferFrom(_owner, _payee, _quantity);
   }
 
