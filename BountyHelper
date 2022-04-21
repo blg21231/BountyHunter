@@ -1,8 +1,9 @@
 pragma solidity >=0.5.0 <0.6.0;
 
 import "./BountyCreator.sol";
+import "./EDU.sol";
 
-contract BountyHelper is Bounty EDU {
+contract BountyHelper is Bounty {
 
   event winningResponse(uint _bountyNum, uint _responseNum);
   event responseCreated(uint _bountyNum, uint _responseNum);
