@@ -29,10 +29,15 @@ contract BountyHelper is Bounty {
   function respond(uint _bountyNum, string _response) external payable {
     require((msg.value == 0.001 ether) || (sufficientBalance(msg.sender, "Credit for one free response", 1)) || (sufficientBalance(msg.sender, "EDU", 100)));
     if (msg.value != 0.001 ether) {
+      uint EDU_index;
       for (a = 0; a < Accounts[msg.sender].wallet.length; a++) {
-        if (Accounts[msg.sender].wallet.Asset == "Credit for one free response",1) {
-          
+        if (Accounts[msg.sender].wallet[a].Asset == "Credit for one free response") {
+          Accounts[msg.sender].wallet[a].Quantity = Accounts[msg.sender].wallet[a].Quantity - 1;
+          break;
         }
+        elif (Accounts[msg.sender].wallet[a].Asset == "EDU") {
+        }
+      
       }
     }
     Vote[] initVotes = [];
