@@ -4,7 +4,7 @@ Sponsors: create Bounties to get ur QUESTIONS ANSWERED and ur TASKS DONE
 
 Responders: WIN EDU for creating the best Response to a Bounty
 
-Voters: bet on Responses to WIN EDU while maintaining quality of Responses
+Voters: bet on the best Responses to WIN EDU while maintaining quality of Responses
 
 Students: earn FREE EDU token DIVIDENDS every month
 
