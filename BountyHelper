@@ -3,6 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./BountyCreator.sol";
 import "./SafeMath.sol";
 import "./EDU.sol";
+import "./Account.sol";
 
 contract BountyHelper is Bounty {
 
@@ -26,7 +27,14 @@ contract BountyHelper is Bounty {
   }
     
   function respond(uint _bountyNum, string _response) external payable {
-    require(msg.value == 0.001 ether);
+    require((msg.value == 0.001 ether) || (sufficientBalance(msg.sender, "Credit for one free response", 1)) || (sufficientBalance(msg.sender, "EDU", 100)));
+    if (msg.value != 0.001 ether) {
+      for (a = 0; a < Accounts[msg.sender].wallet.length; a++) {
+        if (Accounts[msg.sender].wallet.Asset == "Credit for one free response",1) {
+          
+        }
+      }
+    }
     Vote[] initVotes = [];
     Response response = Response(msg.sender, _response, initVotes);
     Bounties[_bountyNum].responses.push(response);
