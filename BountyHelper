@@ -15,7 +15,7 @@ contract BountyHelper is Bounty {
       _;
   }
   
-  function getBounties(string _sortBy, boolean asc) external {
+  function getBounties(string _sortBy, boolean asc) public {
     if (_sortBy == 'expiration') {
     }
     elif (_sortBy == 'votes') {
