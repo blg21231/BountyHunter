@@ -20,6 +20,7 @@ contract AccountCreator is Ownable {
   }
   
   mapping (uint => address) AccountToOwner;
+  mapping (address => uint) OwnerToAccount;
 
   event accountCreated(uint _accountNum, boolean _student, Wallet _wallet);
   
