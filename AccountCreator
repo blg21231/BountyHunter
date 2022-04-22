@@ -19,7 +19,7 @@ contract AccountCreator is Ownable {
     Wallet wallet;
   }
 
-  event accountCreated(uint accountNum, boolean student, Wallet wallet);
+  event accountCreated(uint _accountNum, boolean _student, Wallet _wallet);
   
   Account[] public Accounts;
 
