@@ -19,7 +19,7 @@ contract AccountCreator is Ownable {
     Wallet wallet;
   }
   
-  mapping (Account => Address) AccountToAddress;
+  mapping (uint => address) AccountToOwner;
 
   event accountCreated(uint _accountNum, boolean _student, Wallet _wallet);
   
@@ -27,7 +27,7 @@ contract AccountCreator is Ownable {
 
   function _createAccount(boolean _verified) internal {
     Accounts.push(Account(_verified, Wallet("Credit for one free response", 5)));
-    AccountToAddress[Accounts[Accounts.length - 1]] = msg.sender;
+    AccountToOwner[Accounts.length - 1] = msg.sender;
     emit accountCreated(Accounts.length - 1, Accounts[Accounts.length - 1].student, Accounts[Accounts.length - 1].Wallet);
   }
 }
