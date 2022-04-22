@@ -1,5 +1,7 @@
 # BountyHunter
 
+Create bounties for the doctors, lawyers, software engineers, and the future of humanity to reward them for answering ur questions and completing ur tasks!
+
 Sponsors: create Bounties to get ur QUESTIONS ANSWERED and ur TASKS DONE
 
 Responders: WIN EDU for creating the best Response to a Bounty
