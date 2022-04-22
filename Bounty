@@ -67,7 +67,7 @@ contract Bounty is Ownable {
     _transferFrom(_owner, _payee, _quantity);
   }
 
-  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal sufficientBalance(addressToAccount[msg.sender], _bounty_asset, _bounty_quantity) internal payable {
+  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal sufficientBalance(OwnerToAccount[msg.sender], _bounty_asset, _bounty_quantity) internal payable {
     require(msg.value == 0.001 ether);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses));
     emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
