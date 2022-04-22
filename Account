@@ -4,10 +4,10 @@ import "./BountyCreator.sol";
 
 contract Account is AccountCreator {
 
-  event verifiedAccount(uint accountNum, boolean value);
-  event linkedAccount(uint accountNum, boolean value);
-  event transferSuccess(uint accountNum, boolean value);
-  event withdrawSuccess(uint accountNum, boolean value);
+  event verifiedAccount(uint _accountNum, boolean _value);
+  event linkedAccount(uint _accountNum, boolean _value);
+  event transferSuccess(uint _accountNum, boolean _value);
+  event withdrawSuccess(uint _accountNum, boolean _value);
   
   mapping (uint => address) public accountOwner; 
 
@@ -50,7 +50,7 @@ contract Account is AccountCreator {
     _;
   }
     
-  function verifyAccount(string _email) {
+  function _verifyAccount(string _email) private {
   // check if _email contains ".edu"
   // create code for that email
   // send code to email
@@ -60,17 +60,17 @@ contract Account is AccountCreator {
   // emit event
   }
   
-  function linkAccount(uint _accountNum) {
+  function linkAccount(uint _accountNum) private {
     accountOwner[_accountNum] = /Metamask Address;
     emit linkedAccount(_accountNum, True);
   }
   
-  function transfer(uint _accountNum, address receiver, string asset, uint quantity) verifiedAccount(_accountNum) sufficientBalance(_accountNum, _asset, _quantity) {
+  function transfer(uint _accountNum, address receiver, string asset, uint quantity) verifiedAccount(_accountNum) sufficientBalance(_accountNum, _asset, _quantity) private {
     // send assets to receiver
     // emit transferSuccess event
   }
   
-  function withdraw(uint _accountNum, string asset, uint quantity) isOwner(_accountNum) linkedAccount(_accountNum) sufficientBalance(_accountNum, _asset, _quantity) {
+  function withdraw(uint _accountNum, string asset, uint quantity) isOwner(_accountNum) linkedAccount(_accountNum) sufficientBalance(_accountNum, _asset, _quantity) private {
     //send assets to Metamask wallet
     // emit withdrawSuccess event
   }
