@@ -17,11 +17,6 @@ contract Account is Ownable {
   mapping (string => uint) as code;
 
   event addressVerified(address _address);
-
-  modifier isStudent(address _account) {
-      require(Accounts[_accountNum].student);
-      _;
-  }
   
   modifier contains (string memory what, string memory where) {
       bytes memory whatBytes = bytes (what);
