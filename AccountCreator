@@ -29,6 +29,7 @@ contract AccountCreator is Ownable {
   function _createAccount(boolean _verified) internal {
     Accounts.push(Account(_verified, Wallet("Credit for one free response", 5)));
     AccountToOwner[Accounts.length - 1] = msg.sender;
+    OwnerToAccount[msg.sender] = Accounts.legnth - 1;
     emit accountCreated(Accounts.length - 1, Accounts[Accounts.length - 1].student, Accounts[Accounts.length - 1].Wallet);
   }
 }
