@@ -11,8 +11,8 @@ contract Account is Ownable {
 
   uint randNonce = 0;
   
-  mapping (address => boolean) isStudent;
-  mapping (address => uint) numResponses;
+  mapping (address => boolean) public isStudent;
+  mapping (address => uint) public numResponses;
   mapping (address => string) as email;
   mapping (string => uint) as code;
 
