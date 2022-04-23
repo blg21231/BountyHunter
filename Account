@@ -1,0 +1,63 @@
+pragma solidity >=0.5.0 <0.6.0;
+
+import "./ownable.sol";
+import "./safemath.sol";
+
+contract Account is Ownable {
+
+  using SafeMath for uint256;
+  using SafeMath32 for uint32;
+  using SafeMath16 for uint16;
+
+  uint randNonce = 0;
+  
+  mapping (address => boolean) isStudent;
+  mapping (address => uint) numResponses;
+  mapping (address => string) as email;
+  mapping (string => uint) as code;
+
+  event addressVerified(address _address);
+
+  modifier isStudent(address _account) {
+      require(Accounts[_accountNum].student);
+      _;
+  }
+  
+  modifier contains (string memory what, string memory where) {
+      bytes memory whatBytes = bytes (what);
+      bytes memory whereBytes = bytes (where);
+
+      require(whereBytes.length >= whatBytes.length);
+
+      bool found = false;
+      for (uint i = 0; i <= whereBytes.length - whatBytes.length; i++) {
+          bool flag = true;
+          for (uint j = 0; j < whatBytes.length; j++)
+              if (whereBytes [i + j] != whatBytes [j]) {
+                  flag = false;
+                  break;
+              }
+          if (flag) {
+              found = true;
+              break;
+          }
+      }
+      require (found);
+
+      _;
+  }
+
+  function _requestVerification(string _email) private contains(".edu", _email) returns (uint) {
+    email[msg.sender] = _email;
+    uint random = uint(keccak256(abi.encodePacked(now, msg.sender, randNonce))) % 100000000;
+    randNonce++;
+    uint random2 = uint(keccak256(abi.encodePacked(now, msg.sender, randNonce))) % 100000000;
+    code[_email] = random2;
+    return random2;
+  }
+    
+  function _verifyStudent(uint _code) private {
+    require(keccak256(abi.encodePacked(_code)) == keccak256(abi.encodePacked(code[email[msg.sender)));
+    isStudent[msg.sender] = True;
+  }
+}
