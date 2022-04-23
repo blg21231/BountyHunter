@@ -13,7 +13,7 @@ contract Bounty is Ownable {
 
   event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
   event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
-   
+  
     struct Vote {
     string voter;
     uint numVotes;
@@ -43,89 +43,11 @@ contract Bounty is Ownable {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
     _;
   }
-  
-  modifier validResponse(uint _bountyNum, uint _responseNum) {
-    require((_bountyNum > 0) && (_bountyNum < Bounties.length) && (_responseNum > 0) && (_responseNum < Bounties[_bountyNum].responses.length));
-    _;
-  }
-  
-  modifier sufficientBalance(uint _accountNum, string _asset, uint _quantity) {
-    require(validAccount(_accountNum));
-    boolean sufficient = False;
-    for (uint a = 0; a < Accounts[_accountNum].Wallet.length; a++) {
-      if (keccak256(abi.encodePacked(Accounts[_accountNum].Wallet[a].Asset)) == keccak256(abi.encodePacked(_asset))) {
-        sufficient = True;
-        break;
-      }
-    }
-    emit sufficientBalance(_accountNum, _asset, _quantity, sufficient);
-    require(sufficient);
-    _;
-  }
-  
-  function _payOut(address payable _payee, uint _quantity) external onlyOwner {
-    _transferFrom(_owner, _payee, _quantity);
-  }
 
-  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty, Response[] _responses) internal sufficientBalance(OwnerToAccount[msg.sender], _bounty_asset, _bounty_quantity) internal payable {
-    require(msg.value == 0.001 ether);
-    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses));
-    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, _responses); 
-  }
-  
-event winningResponse(uint _bountyNum, uint _responseNum);
-  event responseCreated(uint _bountyNum, uint _responseNum);
-
-  modifier onlyOwnerOf(uint _bountyNum) {
-      require(msg.sender == Bounties[_bountyNum].sponsor);
-      _;
-  }
-  
-  function getBounties(string _sortBy, boolean asc) public {
-    if (_sortBy == 'expiration') {
-    }
-    elif (_sortBy == 'votes') {
-    }
-    elif (_sortBy == 'bounty_asset') {
-    }
-    elif (_sortBy == 'bounty_quantity') {
-    }
-  }
-    
-  function respond(uint _bountyNum, string _response) external payable {
-    require((msg.value == 0.001 ether) || (sufficientBalance(msg.sender, "Credit for one free response", 1)) || (sufficientBalance(msg.sender, "EDU", 100)));
-    if (msg.value != 0.001 ether) {
-      uint EDU_index;
-      for (a = 0; a < Accounts[msg.sender].wallet.length; a++) {
-        if (Accounts[msg.sender].wallet[a].Asset == "Credit for one free response") {
-          Accounts[msg.sender].wallet[a].Quantity = Accounts[msg.sender].wallet[a].Quantity - 1;
-          break;
-        }
-        elif (Accounts[msg.sender].wallet[a].Asset == "EDU") {
-        }
-      
-      }
-    }
-    Vote[] initVotes = [];
-    Response response = Response(msg.sender, _response, initVotes);
-    Bounties[_bountyNum].responses.push(response);
-    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
-  }
-  
-  function vote(uint _bountyNum, uint _responseNum) external payable {
-    require(msg.value >= 0.001 ether);
-    uint startingVotes = 0;
-    for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
-      if (Bounties[_bountyNum].responses[_responseNum].votes[v].voter == msg.sender) {
-        startingVotes = startingVotes + Bounties[_bountyNum].responses[_responseNum].votes[v].votes;
-      }
-    }
-    uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
-    uint refund = msg.value - votesPurchased * 0.001;
-    Vote vote = Vote(msg.sender, votesPurchased);
-    Bounties[_bountyNum].responses.push(response);
-    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
-    msg.sender.transfer(refund);
+  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
+    require(msg.value >= 0.001 ether or msg.value >= 100 EDU);
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []));
+    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []); 
   }
   
   function closeBounty(uint _bountyNum) private {
@@ -152,6 +74,44 @@ event winningResponse(uint _bountyNum, uint _responseNum);
     for (uint v = 0; v < Bounties[_bountyNum].responses[winningResponse].votes.length; v++) {
       _mint(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
     }
+  }
+  
+  function getBounties(string _sortBy, boolean asc) public {
+    if (_sortBy == 'expiration') {
+    }
+    elif (_sortBy == 'votes') {
+    }
+    elif (_sortBy == 'bounty_asset') {
+    }
+    elif (_sortBy == 'bounty_quantity') {
+    }
+  }
+  
+  function createResponse(uint _bountyNum, string _response) public payable {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
+        require((msg.value == 0.001 ether) || (msg.value == 100 EDU));
+    }
+    Vote[] initVotes = [];
+    Response response = Response(msg.sender, _response, initVotes);
+    Bounties[_bountyNum].responses.push(response);
+    numResponses[msg.sender]++;
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function createVote(uint _bountyNum, uint _responseNum) public payable {
+    require(msg.value >= 0.001 ether);
+    uint startingVotes = 0;
+    for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
+      if (Bounties[_bountyNum].responses[_responseNum].votes[v].voter == msg.sender) {
+        startingVotes = startingVotes + Bounties[_bountyNum].responses[_responseNum].votes[v].votes;
+      }
+    }
+    uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
+    uint refund = msg.value - votesPurchased * 0.001;
+    Vote vote = Vote(msg.sender, votesPurchased);
+    Bounties[_bountyNum].responses.push(response);
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+    msg.sender.transfer(refund);
   }
 }
     
