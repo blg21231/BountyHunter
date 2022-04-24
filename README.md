@@ -6,9 +6,9 @@ Create Bounties for the students studying to be the engineers, designers, creato
 
 Sponsors: create Bounties to get ur QUESTIONS ANSWERED, ur TASKS DONE, and ur PROBLEMS SOLVED
 
-Responders: WIN EDU for creating the best Response to a Bounty
+Responders: win EDU tokens for creating the best Response to a Bounty
 
-Voters: bet on the best Responses to WIN EDU while helping maintain quality of Responses
+Voters: bet on the best Responses to win EDU tokens while helping maintain quality of Responses
 
 Students: earn FREE EDU token DIVIDENDS every month
 
