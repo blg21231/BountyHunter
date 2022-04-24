@@ -48,9 +48,15 @@ contract Bounty is Ownable {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
     _;
   }
+  
+  function _createBounty_ETH(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
+    require(msg.value >= 0.001 ether);
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []));
+    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []); 
+  }
 
-  function _createBounty(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
-    require(msg.value >= 0.001 ether or msg.value >= 100 EDU);
+  function _createBounty_EDU(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
+    require(msg.value >= 100 EDU);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []));
     emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []); 
   }
@@ -92,9 +98,9 @@ contract Bounty is Ownable {
     }
   }
   
-  function createResponse(uint _bountyNum, string _response) public payable {
+  function createResponse_ETH(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
-        require((msg.value == 0.001 ether) || (msg.value == 100 EDU));
+        require(msg.value == 0.001 ether);
     }
     Vote[] initVotes = [];
     Response response = Response(msg.sender, _response, initVotes);
@@ -111,9 +117,52 @@ contract Bounty is Ownable {
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
-  function createVote(uint _bountyNum, uint _responseNum) public payable {
+  function createResponse_EDU(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
-        require((msg.value >= 0.001 ether) || (msg.value >= 100 EDU));
+        require(msg.value == 100 EDU);
+    }
+    Vote[] initVotes = [];
+    Response response = Response(msg.sender, _response, initVotes);
+    Bounties[_bountyNum].responses.push(response);
+    numResponses[msg.sender]++;
+    if msg.value >= 0.001 ether) {
+      uint refund = msg.value - votesPurchased * 0.001;
+      msg.sender.transfer(msg.sender, );
+    }
+    else {
+      uint refund = msg.value - votesPurchased * 100;
+      msg.sender.transfer(refund EDU);
+    }
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function createVote_ETH(uint _bountyNum, uint _responseNum) public payable {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
+        require(msg.value >= 0.001 ether;
+    }
+    uint startingVotes = 0;
+    for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
+      if (Bounties[_bountyNum].responses[_responseNum].votes[v].voter == msg.sender) {
+        startingVotes = startingVotes + Bounties[_bountyNum].responses[_responseNum].votes[v].votes;
+      }
+    }
+    uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
+    Vote vote = Vote(msg.sender, votesPurchased);
+    Bounties[_bountyNum].responses[_responseNum].votes.push(vote);
+    if msg.value >= 0.001 ether) {
+      uint refund = msg.value - votesPurchased * 0.001;
+      msg.sender.transfer(refund ether);
+    }
+    else {
+      uint refund = msg.value - votesPurchased * 100;
+      msg.sender.transfer(refund EDU);
+    }
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function createVote_EDU(uint _bountyNum, uint _responseNum) public payable {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
+        require(msg.value >= 100 EDU);
     }
     uint startingVotes = 0;
     for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
