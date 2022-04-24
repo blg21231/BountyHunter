@@ -2,11 +2,15 @@ pragma solidity >=0.5.0 <0.6.0;
 
 import "./Ownable.sol";
 import "./safemath.sol";
-import "./Account.sol";
+import "./Treasury.sol";
 import "./EDU.sol";
 
 contract eduInterface {
   function transfer(address to, uint256 amount) external returns (bool);
+}
+
+contract treasuryInterface {
+  function getAddress() external returns (address);
 }
 
 contract Bounty is Ownable {
@@ -43,22 +47,30 @@ contract Bounty is Ownable {
   
   Bounty[] public Bounties;
   eduInterface edu;
+  treasuryInterface treasury;
+  
+  mapping (address => uint) numResponses;
 
   modifier validBounty(uint _bountyNum) {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
     _;
   }
   
+  function getAddress() public {
+    return address(this);
+  }
+  
   function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 0.001 ether);
-    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, msg.value, 0,  _subject, _difficulty, []));
-    
-    emit bountyCreated(msg.sender, _name, _description, _expiration, msg.value, 0, _subject, _difficulty, []); 
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, msg.value / 0.001 * 100, 0,  _subject, _difficulty, []));
+    treasury.getAddress().send(msg.value);
+    emit bountyCreated(msg.sender, _name, _description, _expiration, msg.value / 0.001 * 100, 0, _subject, _difficulty, []); 
   }
 
   function _createBounty_EDU(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 100 EDU);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []));
+    edu.burn(address(this), msg.value);
     emit bountyCreated(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []); 
   }
   
@@ -78,21 +90,11 @@ contract Bounty is Ownable {
       }
       totalVotes = totalVotes + currentVotes;
     }
-    
     emit winningResponse(_bountyNum, winningResponse);
     
-    if (Bounties[_bountyNum].bounty_asset == "ETH") {
-    }
-    else {
-      edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
-    }
+    edu.mint(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
     for (uint v = 0; v < Bounties[_bountyNum].responses[winningResponse].votes.length; v++) {
-      if (Bounties[_bountyNum].bounty_asset == "ETH") {
-      }
-      else {
-        edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
-      }
-      edu.transfer(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
+      edu.mint(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
     }
   }
   
@@ -115,14 +117,9 @@ contract Bounty is Ownable {
     Response response = Response(msg.sender, _response, initVotes);
     Bounties[_bountyNum].responses.push(response);
     numResponses[msg.sender]++;
-    if msg.value >= 0.001 ether) {
-      uint refund = msg.value - votesPurchased * 0.001;
-      msg.sender.transfer(msg.sender, );
-    }
-    else {
-      uint refund = msg.value - votesPurchased * 100;
-      msg.sender.transfer(refund EDU);
-    }
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 0.001 * 100 / 2;
+    treasury.getAddress().send(msg.value);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
@@ -134,14 +131,9 @@ contract Bounty is Ownable {
     Response response = Response(msg.sender, _response, initVotes);
     Bounties[_bountyNum].responses.push(response);
     numResponses[msg.sender]++;
-    if msg.value >= 0.001 ether) {
-      uint refund = msg.value - votesPurchased * 0.001;
-      msg.sender.transfer(msg.sender, );
-    }
-    else {
-      uint refund = msg.value - votesPurchased * 100;
-      msg.sender.transfer(refund EDU);
-    }
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 2;
+    edu.burn(address(this), msg.value);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
@@ -158,14 +150,11 @@ contract Bounty is Ownable {
     uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
     Vote vote = Vote(msg.sender, votesPurchased);
     Bounties[_bountyNum].responses[_responseNum].votes.push(vote);
-    if msg.value >= 0.001 ether) {
-      uint refund = msg.value - votesPurchased * 0.001;
-      msg.sender.transfer(refund ether);
-    }
-    else {
-      uint refund = msg.value - votesPurchased * 100;
-      msg.sender.transfer(refund EDU);
-    }
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
+    treasury.getAddress().send(msg.value);
+    uint refund = msg.value - votesPurchased * 0.001;
+    msg.sender.send(refund);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
@@ -182,14 +171,11 @@ contract Bounty is Ownable {
     uint votesPurchased = (2 * msg.value + startingVotes**2) ** (1/2);
     Vote vote = Vote(msg.sender, votesPurchased);
     Bounties[_bountyNum].responses[_responseNum].votes.push(vote);
-    if msg.value >= 0.001 ether) {
-      uint refund = msg.value - votesPurchased * 0.001;
-      msg.sender.transfer(refund ether);
-    }
-    else {
-      uint refund = msg.value - votesPurchased * 100;
-      msg.sender.transfer(refund EDU);
-    }
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].bounty_reward) +  msg.value / 2;
+    edu.burn(address(this), msg.value);
+    uint refund = msg.value - votesPurchased * 100;
+    edu.transfer(msg.sender, refund);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
 }
