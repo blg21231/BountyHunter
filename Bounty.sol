@@ -34,8 +34,8 @@ contract Bounty is Ownable {
     string name;
     string description;
     uint expiration;
-    string bounty_asset;
-    uint bounty_quantity;
+    uint bounty_reward;
+    uint voters_reward;
     string subject;
     uint difficulty;
     Response[] responses;
@@ -51,8 +51,9 @@ contract Bounty is Ownable {
   
   function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 0.001 ether);
-    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "ETH", msg.value, _subject, _difficulty, []));
-    emit bountyCreated(msg.sender, _name, _description, _expiration, "ETH", _bounty_quantity, _subject, _difficulty, []); 
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, msg.value, 0,  _subject, _difficulty, []));
+    
+    emit bountyCreated(msg.sender, _name, _description, _expiration, msg.value, 0, _subject, _difficulty, []); 
   }
 
   function _createBounty_EDU(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
