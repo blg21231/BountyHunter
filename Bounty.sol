@@ -5,6 +5,10 @@ import "./safemath.sol";
 import "./Account.sol";
 import "./EDU.sol";
 
+contract eduInterface {
+  function transfer(address to, uint256 amount) external returns (bool);
+}
+
 contract Bounty is Ownable {
 
   using SafeMath for uint256;
@@ -15,18 +19,18 @@ contract Bounty is Ownable {
   event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
   
     struct Vote {
-    string voter;
+    address voter;
     uint numVotes;
   }
   
     struct Response {
-    string responder;
+    address responder;
     string response;
     Vote[] votes;
   }
   
     struct Bounty {
-    string sponsor;
+    address sponsor;
     string name;
     string description;
     uint expiration;
@@ -38,6 +42,7 @@ contract Bounty is Ownable {
   }
   
   Bounty[] public Bounties;
+  eduInterface edu;
 
   modifier validBounty(uint _bountyNum) {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
@@ -69,10 +74,10 @@ contract Bounty is Ownable {
     
     emit winningResponse(_bountyNum, winningResponse);
     
-    _mint(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
+    edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
     
     for (uint v = 0; v < Bounties[_bountyNum].responses[winningResponse].votes.length; v++) {
-      _mint(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
+      edu.transfer(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
     }
   }
   
@@ -97,7 +102,7 @@ contract Bounty is Ownable {
     numResponses[msg.sender]++;
     if msg.value >= 0.001 ether) {
       uint refund = msg.value - votesPurchased * 0.001;
-      msg.sender.transfer(refund ether);
+      msg.sender.transfer(msg.sender, );
     }
     else {
       uint refund = msg.value - votesPurchased * 100;
