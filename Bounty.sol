@@ -18,18 +18,18 @@ contract Bounty is Ownable {
   event bountyCreated(string sponsor, string name, string description, uint expiration, string bounty_asset, uint bounty_quantity, string subject, uint difficulty, Response[] responses);
   event sufficientBalance(uint accountNum, string asset, uint quantity, boolean value);
   
-    struct Vote {
+  struct Vote {
     address voter;
     uint numVotes;
   }
   
-    struct Response {
+  struct Response {
     address responder;
     string response;
     Vote[] votes;
   }
   
-    struct Bounty {
+  struct Bounty {
     address sponsor;
     string name;
     string description;
@@ -49,16 +49,16 @@ contract Bounty is Ownable {
     _;
   }
   
-  function _createBounty_ETH(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
+  function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 0.001 ether);
-    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []));
-    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []); 
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "ETH", msg.value, _subject, _difficulty, []));
+    emit bountyCreated(msg.sender, _name, _description, _expiration, "ETH", _bounty_quantity, _subject, _difficulty, []); 
   }
 
-  function _createBounty_EDU(string _name, string _description, uint _expiration, string _bounty_asset, uint _bounty_quantity, string _subject, uint _difficulty) internal payable {
+  function _createBounty_EDU(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 100 EDU);
-    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []));
-    emit bountyCreated(msg.sender, _name, _description, _expiration, _bounty_asset, _bounty_quantity, _subject, _difficulty, []); 
+    Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []));
+    emit bountyCreated(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []); 
   }
   
   function closeBounty(uint _bountyNum) private {
@@ -80,9 +80,17 @@ contract Bounty is Ownable {
     
     emit winningResponse(_bountyNum, winningResponse);
     
-    edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
-    
+    if (Bounties[_bountyNum].bounty_asset == "ETH") {
+    }
+    else {
+      edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
+    }
     for (uint v = 0; v < Bounties[_bountyNum].responses[winningResponse].votes.length; v++) {
+      if (Bounties[_bountyNum].bounty_asset == "ETH") {
+      }
+      else {
+        edu.transfer(Bounties[_bountyNum].responses[r].responder, Bounties[_bountyNum].bounty_quantity);
+      }
       edu.transfer(Bounties[_bountyNum].responses[winningResponse].votes[v].voter, (totalVotes - winningVotes) * Bounties[_bountyNum].responses[winningResponse].votes[v].numVotes / winningVotes);
     }
   }
