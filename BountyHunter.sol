@@ -72,18 +72,16 @@ contract BountyHunter is Ownable {
   }
   
   function _claimDividends(address _address) public returns (string) {
+    require(isStudent([_address]));
     string output = ""
-    if (isStudent[_address] == False) {
-      output = "Verify your .edu email and create some Responses to receive free EDU dividends!";
-    }
-    else if (numResponses[_address] - previousNumResponses[_address] < 2) {
-      output = "Create some Responses to receive free EDU dividends!";
+    if (numResponses[_address] - previousNumResponses[_address] < 2) {
+      output = "Create some more Responses to receive free EDU dividends!";
     }
     else if (now - lastDividendClaimTime[_address] < 7 * 24 * 60 * 60) {
-      output = "Please wait at least 7 days after last Dividend Claim to Claim again";
+      output = "Please wait at least 7 days after last Dividend Claim to Claim again!";
     }
     else {
-      output = "Dividends claimed! Come back next week and create some Responses to receive more free EDU dividends!";
+      output = "Dividends claimed! Create some more Responses and come back next week to receive more free EDU dividends!";
       previousNumResponses[_address] = numResponses[_address];
       lastDividendClaimTime[_address] = now;
     return output;
