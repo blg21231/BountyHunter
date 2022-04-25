@@ -5,14 +5,6 @@ import "./safemath.sol";
 import "./BountyHunter.sol";
 import "./EDU.sol";
 
-contract eduInterface {
-  function transfer(address to, uint256 amount) external returns (bool);
-}
-
-contract BountyHunterInterface {
-  function getAddress() external view returns (address);
-}
-
 contract Bounty is Ownable {
 
   using SafeMath for uint256;
@@ -54,10 +46,6 @@ contract Bounty is Ownable {
   modifier validBounty(uint _bountyNum) {
     require((_bountyNum > 0) && (_bountyNum < Bounties.length));
     _;
-  }
-  
-  function getAddress() public {
-    return address(this);
   }
   
   function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
