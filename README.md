@@ -1,4 +1,4 @@
-BountyHunter
+Bounty Hunter
 
 "Every great wizard in history had started out as nothing more than we are now: students. If they can do it, why not us?"
 
