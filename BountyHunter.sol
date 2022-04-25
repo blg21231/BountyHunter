@@ -2,6 +2,7 @@ pragma solidity >=0.5.0 <0.6.0;
 
 import "./ownable.sol";
 import "./safemath.sol";
+import "./EDU.sol";
 
 contract BountyHunter is Ownable {
 
@@ -41,6 +42,8 @@ contract BountyHunter is Ownable {
 
       _;
   }
+  
+  function () payable {}
 
   function _requestVerification(string _email) private contains(".edu", _email) returns (uint) {
     email[msg.sender] = _email;
@@ -62,5 +65,9 @@ contract BountyHunter is Ownable {
   
   function _getNumResponses(address _address) public view returns (uint) {
     return numResponses[_address];
+  }
+  
+  function withdraw(address _address, uint amount) private {
+    transfer(_address, amount);
   }
 }
