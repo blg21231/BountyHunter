@@ -3,7 +3,7 @@ pragma solidity >=0.5.0 <0.6.0;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract Account is Ownable {
+contract BountyHunter is Ownable {
 
   using SafeMath for uint256;
   using SafeMath32 for uint32;
@@ -54,5 +54,13 @@ contract Account is Ownable {
   function _verifyStudent(uint _code) private {
     require(keccak256(abi.encodePacked(_code)) == keccak256(abi.encodePacked(code[email[msg.sender)));
     isStudent[msg.sender] = True;
+  }
+  
+  function _isStudent(address _address) public view returns (bool) {
+    return isStudent[_address];
+  }
+  
+  function _getNumResponses(address _address) public view returns (uint) {
+    return numResponses[_address];
   }
 }
