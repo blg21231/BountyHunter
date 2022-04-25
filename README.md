@@ -12,8 +12,7 @@ Voters: bet on the best Responses to win EDU tokens while helping maintain quali
 
 Students: earn FREE EDU token DIVIDENDS every month
 
-
-Anyone can participate by sponsoring a Bounty, leaving a Response, or Voting on others' responses
+Anyone: participate by sponsoring a Bounty, leaving a Response, or Voting on others' responses
 
 Uniquely enabled by blockchain technologies like smart contracts and cryptoeconomics, maintained by Quadratic Voting Prediction Markets, and centered around helping students, Bounties can be for anything: from writing an article to creating a powerpoint presentation to designing a Hyperloop Pod to Reinventing the Toilet to decentralized hackathons to solving the next set of Millenium Problems (the current set has a $1 million prize reward on web2 for each problem) to anything u can think of really
 
