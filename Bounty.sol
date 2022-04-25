@@ -70,7 +70,7 @@ contract Bounty is Ownable {
   function _createBounty_EDU(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 100 EDU);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []));
-    edu.burn(address(this), msg.value);
+    edu.transfer(bh.getAddress(), msg.value);
     emit bountyCreated(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []); 
   }
   
@@ -133,7 +133,7 @@ contract Bounty is Ownable {
     numResponses[msg.sender]++;
     Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 2;
     Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 2;
-    edu.burn(address(this), msg.value);
+    edu.transfer(bh.getAddress(), msg.value);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
@@ -173,7 +173,7 @@ contract Bounty is Ownable {
     Bounties[_bountyNum].responses[_responseNum].votes.push(vote);
     Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 2;
     Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].bounty_reward) +  msg.value / 2;
-    edu.burn(address(this), msg.value);
+    edu.transfer(bh.getAddress(), msg.value);
     uint refund = msg.value - votesPurchased * 100;
     edu.transfer(msg.sender, refund);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
