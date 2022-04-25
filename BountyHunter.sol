@@ -13,7 +13,6 @@ contract BountyHunter is Ownable {
   uint randNonce = 0;
   
   mapping (address => boolean) public isStudent;
-  mapping (address => uint) public numResponses;
   mapping (address => string) as email;
   mapping (string => uint) as code;
 
@@ -61,10 +60,6 @@ contract BountyHunter is Ownable {
   
   function _isStudent(address _address) public view returns (bool) {
     return isStudent[_address];
-  }
-  
-  function _getNumResponses(address _address) public view returns (uint) {
-    return numResponses[_address];
   }
   
   function withdraw(address _address, uint amount) private {
