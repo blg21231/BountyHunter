@@ -2,9 +2,9 @@
 
 "Every great wizard in history had started out as nothing more than we are now: students. If they can do it, why not us?"
 
-Create Bounties for the students studying to be the engineers, designers, creators, and the next generation of witches and wizards to reward them for answering ur questions and completing ur tasks!
+Create Bounties for the students studying to be the engineers, designers, creators, and the next generation of witches and wizards to reward them for answering ur questions and completing ur tasks! Quality of responses is guaranteed by Prediction Markets with Quadratic Voting 
 
-Sponsors: create Bounties to get ur QUESTIONS ANSWERED, ur TASKS DONE, and ur PROBLEMS SOLVED
+Sponsors: create Bounties and receive high quality Responses to get ur QUESTIONS ANSWERED, ur TASKS DONE, and ur PROBLEMS SOLVED
 
 Responders: win EDU tokens for creating the best Response to a Bounty
 
