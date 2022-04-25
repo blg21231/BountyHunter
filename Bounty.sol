@@ -2,15 +2,15 @@ pragma solidity >=0.5.0 <0.6.0;
 
 import "./Ownable.sol";
 import "./safemath.sol";
-import "./Treasury.sol";
+import "./BountyHunter.sol";
 import "./EDU.sol";
 
 contract eduInterface {
   function transfer(address to, uint256 amount) external returns (bool);
 }
 
-contract treasuryInterface {
-  function getAddress() external returns (address);
+contract BountyHunterInterface {
+  function getAddress() external view returns (address);
 }
 
 contract Bounty is Ownable {
@@ -47,7 +47,7 @@ contract Bounty is Ownable {
   
   Bounty[] public Bounties;
   eduInterface edu;
-  treasuryInterface treasury;
+  BountyHunterInterface BountyHunter;
   
   mapping (address => uint) numResponses;
 
@@ -63,7 +63,7 @@ contract Bounty is Ownable {
   function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 0.001 ether);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, msg.value / 0.001 * 100, 0,  _subject, _difficulty, []));
-    treasury.getAddress().send(msg.value);
+    BountyHunter.getAddress().send(msg.value);
     emit bountyCreated(msg.sender, _name, _description, _expiration, msg.value / 0.001 * 100, 0, _subject, _difficulty, []); 
   }
 
@@ -119,7 +119,7 @@ contract Bounty is Ownable {
     numResponses[msg.sender]++;
     Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
     Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 0.001 * 100 / 2;
-    treasury.getAddress().send(msg.value);
+    BountyHunter.getAddress().send(msg.value);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
@@ -152,7 +152,7 @@ contract Bounty is Ownable {
     Bounties[_bountyNum].responses[_responseNum].votes.push(vote);
     Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
     Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
-    treasury.getAddress().send(msg.value);
+    BountyHunter.getAddress().send(msg.value);
     uint refund = msg.value - votesPurchased * 0.001;
     msg.sender.send(refund);
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
