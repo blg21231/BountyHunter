@@ -88,6 +88,7 @@ contract BountyHunter is Ownable {
       output = "Dividends claimed! Create some more Responses and come back next week to receive more free EDU dividends!";
       previousNumResponses[_address] = numResponses[_address];
       lastDividendClaimTime[_address] = now;
+      transfer(_address, uint(_getTotalSupply() * 0.00038089227 / numStudents));
     return output;
     }
   }
