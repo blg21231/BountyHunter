@@ -48,6 +48,10 @@ contract Bounty is Ownable {
     _;
   }
   
+  function _getTotalEDUSupply() public view returns (uint) {
+    return edu.totalSupply();
+  }
+  
   function _createBounty_ETH(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
     require(msg.value >= 0.001 ether);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, msg.value / 0.001 * 100, 0,  _subject, _difficulty, []));
@@ -98,7 +102,7 @@ contract Bounty is Ownable {
   }
   
   function createResponse_ETH(uint _bountyNum, string _response) public payable {
-    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - getPreviousNumResponses[msg.sender] > 2)) {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
         require(msg.value == 0.001 ether);
     }
     Vote[] initVotes = [];
@@ -112,7 +116,7 @@ contract Bounty is Ownable {
   }
   
   function createResponse_EDU(uint _bountyNum, string _response) public payable {
-    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
         require(msg.value == 100 EDU);
     }
     Vote[] initVotes = [];
