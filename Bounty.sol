@@ -98,7 +98,7 @@ contract Bounty is Ownable {
   }
   
   function createResponse_ETH(uint _bountyNum, string _response) public payable {
-    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
+    if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - getPreviousNumResponses[msg.sender] > 2)) {
         require(msg.value == 0.001 ether);
     }
     Vote[] initVotes = [];
