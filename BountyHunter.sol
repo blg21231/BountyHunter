@@ -46,6 +46,10 @@ contract BountyHunter is Ownable {
   }
   
   function () payable {}
+  
+  function _getPreviousNumResponses(address _address) public view returns (uint) {
+    return previousNumResponses[_address];
+  }
 
   function _requestVerification(string _email) private contains(".edu", _email) returns (uint) {
     email[msg.sender] = _email;
