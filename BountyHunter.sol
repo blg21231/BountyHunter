@@ -1,7 +1,7 @@
 pragma solidity >=0.5.0 <0.6.0;
 
-import "./ownable.sol";
-import "./safemath.sol";
+import "./Ownable.sol";
+import "./SafeMath.sol";
 import "./EDU.sol";
 
 contract BountyHunter is Ownable {
@@ -62,7 +62,7 @@ contract BountyHunter is Ownable {
   }
     
   function _verifyStudent(uint _code) private {
-    require(keccak256(abi.encodePacked(_code)) == keccak256(abi.encodePacked(code[email[msg.sender)));
+    require(keccak256(abi.encodePacked(_code)) == keccak256(abi.encodePacked(code[email[msg.sender]])));
     isStudent[codeToAddress[_code]] = True;
     lastDividendClaimTime[codeToAddress[_code]] = now;
   }
@@ -77,7 +77,7 @@ contract BountyHunter is Ownable {
   
   function _claimDividends(address _address) public returns (string) {
     require(isStudent([_address]));
-    string output = ""
+    string output = "";
     if (numResponses[_address] - previousNumResponses[_address] < 2) {
       output = "Create some more Responses to receive free EDU dividends!";
     }
