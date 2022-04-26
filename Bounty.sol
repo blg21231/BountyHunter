@@ -1,7 +1,7 @@
 pragma solidity >=0.5.0 <0.6.0;
 
 import "./Ownable.sol";
-import "./safemath.sol";
+import "./SafeMath.sol";
 import "./BountyHunter.sol";
 import "./EDU.sol";
 
@@ -60,7 +60,7 @@ contract Bounty is Ownable {
   }
 
   function _createBounty_EDU(string _name, string _description, uint _expiration, string _subject, uint _difficulty) internal payable {
-    require(msg.value >= 100 EDU);
+    require(msg.value >= 100);
     Bounties.push(Bounty(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []));
     edu.transfer(bh.getAddress(), msg.value);
     emit bountyCreated(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []); 
@@ -90,17 +90,6 @@ contract Bounty is Ownable {
     }
   }
   
-  function getBounties(string _sortBy, boolean asc) public {
-    if (_sortBy == 'expiration') {
-    }
-    elif (_sortBy == 'votes') {
-    }
-    elif (_sortBy == 'bounty_asset') {
-    }
-    elif (_sortBy == 'bounty_quantity') {
-    }
-  }
-  
   function createResponse_ETH(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
         require(msg.value == 0.001 ether);
@@ -117,7 +106,7 @@ contract Bounty is Ownable {
   
   function createResponse_EDU(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
-        require(msg.value == 100 EDU);
+        require(msg.value == 100);
     }
     Vote[] initVotes = [];
     Response response = Response(msg.sender, _response, initVotes);
@@ -131,7 +120,7 @@ contract Bounty is Ownable {
   
   function createVote_ETH(uint _bountyNum, uint _responseNum) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
-        require(msg.value >= 0.001 ether;
+        require(msg.value >= 0.001 ether);
     }
     uint startingVotes = 0;
     for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
@@ -152,7 +141,7 @@ contract Bounty is Ownable {
   
   function createVote_EDU(uint _bountyNum, uint _responseNum) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
-        require(msg.value >= 100 EDU);
+        require(msg.value >= 100);
     }
     uint startingVotes = 0;
     for (uint v = 0; v < Bounties[_bountyNum].responses[_responseNum].votes.length; v++) {
