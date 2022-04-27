@@ -66,7 +66,7 @@ contract Bounty is Ownable {
     emit bountyCreated(msg.sender, _name, _description, _expiration, "EDU", msg.value, _subject, _difficulty, []); 
   }
   
-  function closeBounty(uint _bountyNum) private {
+  function _closeBounty(uint _bountyNum) private {
     uint totalVotes = 0;
     uint winningVotes = 0;
     uint winningResponse = 0;
@@ -90,7 +90,7 @@ contract Bounty is Ownable {
     }
   }
   
-  function createResponse_ETH(uint _bountyNum, string _response) public payable {
+  function _createResponse_ETH(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
         require(msg.value == 0.001 ether);
     }
@@ -104,7 +104,7 @@ contract Bounty is Ownable {
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
-  function createResponse_EDU(uint _bountyNum, string _response) public payable {
+  function _createResponse_EDU(uint _bountyNum, string _response) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] - _getPreviousNumResponses(msg.sender) > 2)) {
         require(msg.value == 100);
     }
@@ -118,7 +118,31 @@ contract Bounty is Ownable {
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
-  function createVote_ETH(uint _bountyNum, uint _responseNum) public payable {
+  function _sponsorResponse_ETH(uint _bountyNum, address _responder, string _response) public payable {
+    require(msg.value == 0.001 ether);
+    Vote[] initVotes = [msg.sender, 2];
+    Response response = Response(_responder, _response, initVotes);
+    Bounties[_bountyNum].responses.push(response);
+    numResponses[_responder]++;
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 0.001 * 100 / 2;
+    bh.getAddress().send(msg.value);
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function _sponsorResponse_EDU(uint _bountyNum, address _responder, string _response) public payable {
+    require(msg.value == 100);
+    Vote[] initVotes = [msg.sender, 2];
+    Response response = Response(_responder, _response, initVotes);
+    Bounties[_bountyNum].responses.push(response);
+    numResponses[_responder]++;
+    Bounties[_bountyNum].bounty_reward = uint(Bounties[_bountyNum].bounty_reward) + msg.value / 0.001 * 100 / 2;
+    Bounties[_bountyNum].voters_reward = uint(Bounties[_bountyNum].voters_reward) + msg.value / 0.001 * 100 / 2;
+    bh.getAddress().send(msg.value);
+    emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
+  }
+  
+  function _createVote_ETH(uint _bountyNum, uint _responseNum) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
         require(msg.value >= 0.001 ether);
     }
@@ -139,7 +163,7 @@ contract Bounty is Ownable {
     emit responseCreated(_bountyNum, Bounties[_bountyNum].responses.length - 1);
   }
   
-  function createVote_EDU(uint _bountyNum, uint _responseNum) public payable {
+  function _createVote_EDU(uint _bountyNum, uint _responseNum) public payable {
     if ((isStudent[msg.sender] == False) || (numResponses[msg.sender] >= 5)) {
         require(msg.value >= 100);
     }
